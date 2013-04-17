@@ -5,14 +5,11 @@ module SessionsHelper
   end
   
   def signed_in?
-p 11111
-p #current_user
     !current_user.nil?
   end
 
   def sign_out
     @current_user = nil
-p @current_user
     cookies.delete(:remember_token)
   end
 
@@ -21,11 +18,18 @@ p @current_user
   #end
   
   def current_user
-p 222
-p cookies[:remember_token]
-p @current_user
-p User.find_by_remember_token(cookies[:remember_token].to_s)
-    @current_user ||= User.find_by_remember_token(cookies[:remember_token].to_s)
-p @current_user
+    if cookies[:remember_token].nil?
+      return @current_user
+    else
+      @current_user ||= User.find_by_remember_token(cookies[:remember_token])
+    end
   end
+
+  def current_user?(user)
+    current_user==user
+  end
+  def deny_access
+    redirect_to signin_path, :notice => "Please sign in to access this page."
+  end
+  
 end
