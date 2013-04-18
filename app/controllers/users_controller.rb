@@ -23,6 +23,7 @@ class UsersController < ApplicationController
   
   def show
     @user=User.find(params[:id])
+    @microposts=@user.microposts.paginate(page: params[:page])
   end
 
   def index
@@ -36,6 +37,10 @@ class UsersController < ApplicationController
   def update
     @user=User.find(params[:id])
     if @user.update_attributes(params[:user])
+      if @user.is_admin?
+        @user.name+="(admin)" 
+        @user.save
+      end
       flash[:success]="Profile updated!"
       sign_in @user
       redirect_to @user
@@ -51,9 +56,7 @@ class UsersController < ApplicationController
   end
 
   private
-  def authenticate
-    deny_access unless signed_in?
-  end
+  
   def correct_user
     @user = User.find(params[:id])
     redirect_to(root_path) unless current_user?(@user)

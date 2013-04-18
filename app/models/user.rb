@@ -12,7 +12,8 @@
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :password, :password_confirmation, 
 		:remember_token
-  has_secure_password
+  has_secure_password #what's the meaning?
+  has_many :microposts#, dependent: :destroy #The name of model.
   
   before_save { |user| user.email = email.downcase }
   before_save :create_remember_token
@@ -30,7 +31,9 @@ class User < ActiveRecord::Base
 #  def admin?
 #    self.admin
 #  end
-
+  def feed
+    Micropost.where("user_id=?",id)
+  end
   private
   def create_remember_token
     self.remember_token = SecureRandom.urlsafe_base64#Create the token
