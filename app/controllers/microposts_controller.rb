@@ -6,11 +6,18 @@ class MicropostsController < ApplicationController
   def create
     @micropost=current_user.microposts.build(params[:micropost])
     if @micropost.save
-      flash[:success]="Micropost created!"
-      redirect_to root_path
+p 11111
+      @feed_items=current_user.feed.paginate(page: params[:page])#why need?
+      flash[:success]="Micropost created!"#it disappears when use ajax
+      render 'success'
     else
-      @feed_items=[]
-      render 'static_pages/home'
+      @feed_items=current_user.feed.paginate(page: params[:page])#why need?
+      #respond_to do |format|
+        #format.html { redirect_to root_path }
+        #format.js
+      #end
+      render 'failed'
+p 33333
     end
   end
 
